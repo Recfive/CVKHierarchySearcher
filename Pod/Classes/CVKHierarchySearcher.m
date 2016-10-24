@@ -14,14 +14,28 @@
 
 - (UIViewController *)topmostViewController
 {
-    return [self topmostViewControllerFrom:[[self baseWindow] rootViewController]
-                              includeModal:YES];
+#ifndef CVK_IS_APP_EXTENSION
+    return [self topmostViewControllerFrom:[[self baseWindow] rootViewController] includeModal:YES];
+#else
+    if ([[NSObject class] instancesRespondToSelector:@selector(r5_rootPresentationController)])
+    {
+        return [self topmostViewControllerFrom:[self performSelector:@selector(r5_rootPresentationController)] includeModal:YES];
+    }
+    return nil;
+#endif
 }
 
 - (UIViewController *)topmostNonModalViewController
 {
-    return [self topmostViewControllerFrom:[[self baseWindow] rootViewController]
-                              includeModal:NO];
+#ifndef CVK_IS_APP_EXTENSION
+    return [self topmostViewControllerFrom:[[self baseWindow] rootViewController] includeModal:NO];
+#else
+    if ([[NSObject class] instancesRespondToSelector:@selector(r5_rootPresentationController)])
+    {
+        return [self topmostViewControllerFrom:[self performSelector:@selector(r5_rootPresentationController)] includeModal:NO];
+    }
+    return nil;
+#endif
 }
 
 - (UINavigationController *)topmostNavigationController
@@ -59,11 +73,15 @@
 
 - (UIWindow *)baseWindow
 {
+#ifndef CVK_IS_APP_EXTENSION
     UIWindow *window = [[[UIApplication sharedApplication] delegate] window];
     if (!window)
         window = [[UIApplication sharedApplication] keyWindow];
 
     NSAssert(window != nil, @"No window to calculate hierarchy from");
+#else
+    UIWindow *window = nil;
+#endif
     return window;
 }
 
