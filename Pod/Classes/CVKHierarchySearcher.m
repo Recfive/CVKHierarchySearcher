@@ -68,6 +68,11 @@
         return [self topmostViewControllerFrom:[(id)viewController topViewController]
                                   includeModal:includeModal];
 
+    if ([viewController respondsToSelector:@selector(isContainerViewController)] && viewController.childViewControllers.count)
+    {
+        return [self topmostViewControllerFrom:viewController.childViewControllers.firstObject includeModal:includeModal];
+    }
+
     return viewController;
 }
 
